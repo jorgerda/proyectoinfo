@@ -1,0 +1,32 @@
+USUARIO(id, nombres, apellidos, matricula, puesto, genero, campus, bdate, correo, cel, alergia, a.alimentos, a.medicos, vegetariano, dieta, capacitacion_previa, talla, contacto_emergencia, parentesco, emertel, aseguradora, poliza, vencimiento, cuarto_id);
+
+PK(id);
+FK(cuarto_id) references CUARTO(id);
+
+CUARTO(id, #_cuarto, edificio, piso);
+PK(id);
+
+TRANSPORTE(id, fecha, origen, destino, encargado, actividad_id);
+PK(id);
+FK(encargado) references USUARIO(id);
+FK(actividad_id) references ACTIVIDAD(id);
+
+ACTIVIDAD(id, nombre, fecha_inicio, fecha_fin, sede);
+PK(id);
+
+// Join tables
+
+ACTIVIDAD_ENCARGADOS(actividad_id, encargado_id);
+PK(actividad_id, encargado_id);
+FK(actividad_id) references ACTIVIDAD(id);
+FK(encargado_id) references USUARIO(id);
+
+ASISTENCIA_ACTIVIDAD(actividad_id, usuario_id, asistencia);
+PK(actividad_id, usuario_id);
+FK(actividad_id) references ACTIVIDAD(id);
+FK(usuario_id) references USUARIO(id)
+
+ASISTENCIA_TRANSPORTE(transporte_id, usuario_id, asistencia);
+PK(transporte_id, usuario_id);
+FK(transporte_id) references TRANSPORTE(id);
+FK(usuario_id) references USUARIO(id);
