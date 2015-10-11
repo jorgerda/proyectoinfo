@@ -12,6 +12,7 @@ public class Usuario {
 
 	// Declaracion de variables
 	private String nombre, apellido, matricula, genero, correo, celular, puesto, alergias, food, value, medicina, dieta, vegetariano, capacitado, camiseta;
+	private String[]  table = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento"};
 	private int campus;
 
 	public Connection connect(){
@@ -696,25 +697,28 @@ public class Usuario {
 		connection.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
-		
+		}
 	}
-}
 
 	public void resetTable(){
 		Scanner scan = new Scanner(System.in);
-		String query = "";
-		int value;
+		String choice = "";
+		Statement stmt;
 		
 		Connection connection = this.connect();
-		System.out.println("Introduzca el ID del usuario a eliminar");
-		value = scan.nextInt();
-		query = "'DELETE FROM carnero WHERE ID=" + value + "'";
-		
 		try{
-			Statement stmt = connection.createStatement();
-			stmt.executeUpdate(query);
-			System.out.println("Tabla borrada exitosamente");
-	//	rs.close();
+			stmt = connection.createStatement();
+			// Comprobar si desea borrar la tabla
+			System.out.println("¿Desea eliminar TODOS los datos? (Y/N)");
+			scan.nextLine();//Clear buffer
+			choice = scan.nextLine();
+
+			if((choice.toUpperCase()).equals("Y")){
+				stmt.executeUpdate("TRUNCATE TABLE carnero");
+				System.out.println("Tabla borrada exitosamente");
+			} else {
+				System.out.println("Cancelado");
+			}
 		connection.close();
 		}
 		catch (SQLException e) {
@@ -732,7 +736,6 @@ int count = rs.getInt(1);
 		// Print user info
 		Connection connection = this.connect();
 		Statement stmt;
-		String[]  table = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento"};
 
 		try{
 			stmt = connection.createStatement();
@@ -770,5 +773,56 @@ int count = rs.getInt(1);
 		catch(SQLException e){
 			System.out.println(e.getMessage());
 		}
+	}
+	
+	public void search(){
+		Scanner scan = new Scanner(System.in);
+		Connection connection = this.connect();
+		Statement stmt;
+		String search, query;
+		
+		try{
+			stmt = connection.createStatement();
+			System.out.println("Introduzca la palabra clave a buscar");
+			search = scan.nextLine();
+			stmt.execute("CREATE ALIAS IF NOT EXISTS FT_INIT FOR \"org.h2.fulltext.FullText.init\"");
+			stmt.execute("CALL FT_INIT()");
+			stmt.execute("CALL FT_REINDEX()");
+	
+			System.out.println(search);
+			query = "SELECT T.* FROM FT_SEARCH_DATA('" + search + "', 0, 0) FT, CARNERO T WHERE FT.TABLE='CARNERO' AND T.ID=FT.KEYS[0]";  
+			ResultSet rs = stmt.executeQuery(query);
+			
+			for(int i=0; i<table.length; i++){
+				System.out.print(table[i]+"\t");
+			}
+			System.out.println();
+
+			while(rs.next()){
+				int id = rs.getInt(1);
+				String nombre = rs.getString(2);
+				String apellido = rs.getString(3);
+				String matricula = rs.getString(4);
+				String puesto = rs.getString(5);
+				String genero = rs.getString(6);
+				String campus = rs.getString(7);
+				String dob = rs.getString(8);
+				String correo = rs.getString(9);
+				String celular = rs.getString(10);
+				String alergias = rs.getString(11);
+				String comida = rs.getString(12);
+				String medicina = rs.getString(13);
+				String vegetariano = rs.getString(14);
+				String dieta = rs.getString(15);
+				String capacitacion = rs.getString(16);
+				String camiseta = rs.getString(17);
+
+				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campus + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta);
+			}
+			
+		} catch(SQLException e){
+			System.out.println(e.getMessage());
+		}
+		
 	}
 }

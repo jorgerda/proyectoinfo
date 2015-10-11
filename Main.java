@@ -9,7 +9,7 @@ public class Main {
 		int option = 0;
 		Usuario user = new Usuario();
 		Scanner scanned = new Scanner(System.in);
-		System.out.println("Introduzca una opción a realizar\n1 Agregar usuarios\n2 Ver usuarios\n3 Editar usuarios \n4 Eliminar usuario \n5 Eliminar todos los usuarios \n6 Cerrar el programa");
+		System.out.println("Introduzca una opción a realizar\n1 Agregar usuarios\n2 Ver usuarios\n3 Editar usuarios \n4 Eliminar usuario \n5 Eliminar todos los usuarios \n6 Buscar usuario \n7 Cerrar el programa");
 		do{
 			option = scanned.nextInt();
 			switch(option){
@@ -29,6 +29,9 @@ public class Main {
 				user.resetTable();
 				break;
 			case 6:
+				user.search();
+				break;
+			case 7:
 				System.exit(0);
 				break;
 			default:
