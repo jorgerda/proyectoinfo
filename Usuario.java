@@ -7,13 +7,18 @@ import java.util.Scanner;
 import org.h2.jdbcx.JdbcDataSource;
 
 public class Usuario {
-	// public static void main(String args[]) throws SQLException, IOException{
-
 
 	// Declaracion de variables
-	private String nombre, apellido, matricula, genero, correo, celular, puesto, alergias, food, value, medicina, dieta, vegetariano, capacitado, camiseta;
-	private String[]  table = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento"};
+	// Propiedades del usuario
+	private String nombre, apellido, matricula, genero, correo, celular, puesto, food, medicina, dieta, camiseta;
+	private boolean capacitado, vegetariano, alergias;
 	private int campus;
+	private Cuarto room;
+
+	
+
+	private String[]  tableHeader = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento"};
+	String value;
 
 	public Connection connect(){
 		// private int id;
@@ -48,11 +53,16 @@ public class Usuario {
 	public void add(){
 		//Agregar persona
 		Scanner scan = new Scanner(System.in);
+
 		String[] inputs = {"Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","Alergias a alimentos","Alergias a medicamentos","Vegetariano","Dieta especial","Capacitado previamente","Talla de camiseta","Nombre del contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento"};
+
 		String[] columnNames = {"nombres","apellidos","matricula","puesto","sexo","campus","dob","correo","celular","alergias","comida","medicina","vegetariano","dieta","capacitado","camiseta","contactoemergencia","parentesco","telemergencia","aseguradora","poliza","vence"};
+
 		String[] puestos = {"Participante","Staff","Instructor","Coordinador","Coordinador DAE"};
 		String[] parentescos = {"Padre","Madre","Herman@","Abuel@","Tutor"};
+
 		String[] campus = {"Aguascalientes","Central de Veracruz","Chiapas","Chihuahua","Ciudad de México","Ciudad Juárez","Ciudad Obregón","Cuernavaca","Cumbres","Estado de México","Eugenio Garza Lagüera","Eugenio Garza Sada","Guadalajara","Hidalgo","Irapuato","Laguna","León","Morelia","Puebla","Querétaro","Saltillo","San Luis Potosí","Santa Catarina","Santa Fe","Sinaloa","Sonora Norte","Tampico","Toluca","Valle Alto","Zacatecas","Prep School El Paso","Sede Celaya","Sede Colima","Sede Esmeralda","Sede Matamoros","Sede Metepec","Sede Navojoa","Sede Santa Anita"};
+
 		String value = "", query = "", temp="";
 		int choice;
 
@@ -64,7 +74,7 @@ public class Usuario {
 			System.out.println(inputs[i]+":");
 			value = scan.nextLine();
 			temp = "'" + value + "',";
-			query = query + temp;
+			query += temp;
 			i++;
 		}while(i<=2);
 
@@ -82,7 +92,7 @@ public class Usuario {
 		value=puestos[choice-1];
 		
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir y regsitrar género
 		int j = 0;
@@ -92,41 +102,42 @@ public class Usuario {
 		do{
 			value = scan.nextLine();
 
-			if((value.toUpperCase()).equals("H")){
-				j = 1;
-				temp = "'" + value.toUpperCase() + "',";
-				query = query + temp;
-
-			} else if((value.toUpperCase()).equals("M")){
-				j = 1;
-				temp = "'" + value.toUpperCase() + "',";
-				query = query + temp;
-			} else{
-				j = 0;
+			if(!value.toUpperCase.equals("H") || !value.toUpperCase.equals("M"))
 				System.out.println("Opción inválida, intente nuevamente");
-			}
-		}while(j == 0);
+		}while(!value.toUpperCase.equals("H") || !value.toUpperCase.equals("M"));
+
+		temp = "'" + value.toUpperCase() + "',";
+		query += temp;
+
+
+
 
 		// Pedir y registrar campus
 		j=0;
 		int digit = 0;
-		System.out.println(inputs[5]+":");
-			for (int k=0; k<campus.length; k++)// Imprimir lista de campus
-				System.out.println(k+1 +" " + campus[k]);
+		System.out.println(inputs[5]+":"); // Campus: 
+
+		// Imprimir lista de campus
+		for (int k = 0; k < campus.length; k++)
+			System.out.println(k+1 +" " + campus[k]);
 
 		do{
-			digit = scan.nextInt();
 		
+			digit = scan.nextInt();
+
 			if(digit>=1 && digit<=38){
 				value = campus[digit-1];
 				temp = "'" + value + "',";
-				query = query + temp;
+				query += temp;
 				j = 1;
 			} else{
 				j = 0;
 				System.out.println("Opción inválida, intente nuevamente");
 			}
 		}while(j == 0);
+
+
+
 
 		// Pedir y registrar DOB
 		System.out.println(inputs[6] + ": (YYYY-MM-DD)");
@@ -134,7 +145,7 @@ public class Usuario {
 		value = scan.nextLine();
 		
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir y registrar correo y celular
 		//scan.nextLine();//Clear buffer
@@ -143,7 +154,7 @@ public class Usuario {
 			System.out.println(inputs[i]+":");
 			value = scan.nextLine();
 			temp = "'" + value + "',";
-			query = query + temp;
+			query += temp;
 			i++;
 		}while(i<=8);
 
@@ -155,7 +166,7 @@ public class Usuario {
 			if((value.toUpperCase()).equals("Y")){
 				j = 1;
 				temp = "'" + value.toUpperCase() + "',";
-				query = query + temp;
+				query += temp;
 				
 				// Verificiar si tiene alergias a alimentos
 				int l = 0;
@@ -167,12 +178,12 @@ public class Usuario {
 						System.out.println("Alergias a alimentos:");
 						value = scan.nextLine();
 						temp = "'" + value + "',";
-						query = query + temp;
+						query += temp;
 					} else if((value.toUpperCase()).equals("N")){
 						l = 1;
 						value = "NULL";
 						temp = value + ",";
-						query = query + temp;
+						query += temp;
 					} else{
 						l = 0;
 						System.out.println("Opción inválida, intente nuevamente");
@@ -189,12 +200,12 @@ public class Usuario {
 						System.out.println("Alergias a medicamentos:");
 						value = scan.nextLine();
 						temp = "'" + value + "',";
-						query = query + temp;
+						query += temp;
 					} else if((value.toUpperCase()).equals("N")){
 						l = 1;
 						value = "NULL";
 						temp = value + ",";
-						query = query + temp;
+						query += temp;
 					} else{
 						l = 0;
 						System.out.println("Opción inválida, intente nuevamente");
@@ -205,7 +216,7 @@ public class Usuario {
 				for(int o = 0; o<3; o++){
 					value = "NULL";
 						temp = value + ",";
-						query = query + temp;
+						query += temp;
 				}
 			} else{
 				j = 0;
@@ -230,7 +241,7 @@ public class Usuario {
 		}while(j == 0);
 		
 		temp = "'" + value.toUpperCase() + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir si tiene dieta especial
 		j = 0;
@@ -243,12 +254,12 @@ public class Usuario {
 				System.out.println("Dieta especial:");
 				value = scan.nextLine();
 				temp = "'" + value + "',";
-				query = query + temp;
+				query += temp;
 			} else if((value.toUpperCase()).equals("N")){
 				j = 1;
 				value = "NULL";
 				temp = value + ",";
-				query = query + temp;
+				query += temp;
 			} else{
 				j = 0;
 				System.out.println("Opción inválida, intente nuevamente");
@@ -272,7 +283,7 @@ public class Usuario {
 		}while(j == 0);
 		
 		temp = "'" + value.toUpperCase() + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir talla de camiseta
 		System.out.println("Talla de camiseta: (S-M-L)");
@@ -285,13 +296,13 @@ public class Usuario {
 		}
 		
 		temp = "'" + value.toUpperCase() + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir contacto de emergencia
 		System.out.println(inputs[16]+":");
 		value = scan.nextLine();
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir parentesco
 		System.out.println(inputs[17]+": \n1 Padre \n2 Madre \n3 Herman@ \n4 Abuel@ \n5 Tutor");
@@ -307,32 +318,32 @@ public class Usuario {
 		value = parentescos[choice-1];
 		
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir teléfono de emergencia
 		scan.nextLine();//Clear buffer
 		System.out.println(inputs[18]+":");
 		value = scan.nextLine();
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir aseguradora
 		System.out.println(inputs[19]+":");
 		value = scan.nextLine();
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir póliza
 		System.out.println(inputs[20]+":");
 		value = scan.nextLine();
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 
 		// Pedir vencimiento
 		System.out.println(inputs[21] + ": (YYYY-MM-DD)");
 		value = scan.nextLine();
 		temp = "'" + value + "',";
-		query = query + temp;
+		query += temp;
 				
 		
 		// Escape this
@@ -667,15 +678,17 @@ public class Usuario {
 	}
 	public void deleteEntry(){
 		Scanner scan = new Scanner(System.in);
-		int value;
+		int id;
 		String choice = "", query = "";
+
+		// Get DB connection
 		Connection connection = this.connect();
 		Statement stmt;
 		
 		try{
 			System.out.println("Introduzca el ID del usuario a eliminar");
-			value = scan.nextInt();
-			query = "SELECT nombres, apellidos FROM carnero WHERE ID=" + value;
+			id = scan.nextInt();
+			query = "SELECT nombres, apellidos FROM carnero WHERE ID=" + id;
 						
 			stmt = connection.createStatement();
 
@@ -687,7 +700,7 @@ public class Usuario {
 			choice = scan.nextLine();
 
 			if((choice.toUpperCase()).equals("Y")){
-				query = "DELETE FROM carnero WHERE ID="+value;
+				query = "DELETE FROM carnero WHERE ID="+id;
 				stmt.executeUpdate(query);
 				System.out.println("Usuario eliminado exitosamente");
 			} else {
@@ -741,9 +754,9 @@ int count = rs.getInt(1);
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM CARNERO ORDER BY ID ASC");
 
-			for(int i=0; i<table.length; i++){
-				System.out.print(table[i]+"\t");
-			}
+			for(int i=0; i<tableHeader.length; i++)
+				System.out.print(tableHeader[i]+"\t");
+
 			System.out.println();
 
 			while(rs.next()){
@@ -753,7 +766,7 @@ int count = rs.getInt(1);
 				String matricula = rs.getString(4);
 				String puesto = rs.getString(5);
 				String genero = rs.getString(6);
-				String campus = rs.getString(7);
+				int digit = rs.getString(7);
 				String dob = rs.getString(8);
 				String correo = rs.getString(9);
 				String celular = rs.getString(10);
@@ -765,7 +778,7 @@ int count = rs.getInt(1);
 				String capacitacion = rs.getString(16);
 				String camiseta = rs.getString(17);
 
-				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campus + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta);
+				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campus[digit-1] + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta);
 			}
 			rs.close();
 			connection.close();
@@ -793,8 +806,9 @@ int count = rs.getInt(1);
 			query = "SELECT T.* FROM FT_SEARCH_DATA('" + search + "', 0, 0) FT, CARNERO T WHERE FT.TABLE='CARNERO' AND T.ID=FT.KEYS[0]";  
 			ResultSet rs = stmt.executeQuery(query);
 			
-			for(int i=0; i<table.length; i++){
-				System.out.print(table[i]+"\t");
+			// Print header
+			for(int i=0; i<tableHeader.length; i++){
+				System.out.print(tableHeader[i]+"\t");
 			}
 			System.out.println();
 

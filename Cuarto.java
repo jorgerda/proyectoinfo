@@ -1,16 +1,23 @@
+import java.io.*;
+import java.util.*;
 public class Cuarto {
-	private int numero;
-	private String roomie;
 
-	private static void edit(){
+	// Declaracion variables (propiedades)
+	private int numeroCuarto, piso;
+	private String edificio;
 
-	}
-
-	private static void delete(){
+	private void edit(){
 
 	}
 
-	private static void remove(){
+	private void delete(){
 
+	}
+
+	private void remove(){
+
+	}
+	public void printRoom(){
+		// Imprimir los datos del cuarto
 	}
 }
