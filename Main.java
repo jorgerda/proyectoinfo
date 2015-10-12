@@ -5,6 +5,23 @@ public class Main {
 		menu();
 		//user.add();
 	}
+	public void add(){
+		Scanner scan = new Scanner(System.in);
+		
+		System.out.println("Introduzca el nombre de la actividad");
+		nombre = scan.nextLine();
+		
+		System.out.println("Introduzca la fecha de inicio (YYYY-MM-DD HH:mm)");
+		fechaInicio = scan.nextLine();
+				
+		System.out.println("Introduzca la fecha de conclusión (YYYY-MM-DD HH:mm)");
+		fechaFin = scan.nextLine();
+				
+		System.out.println("Introduzca la sede de la actividad");
+		sede = scan.nextLine();
+		
+		// Pedir quien es el encargado		
+	}
 	public static void menu(){
 		int option = 0;
 		Usuario user = new Usuario();
