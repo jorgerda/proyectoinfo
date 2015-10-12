@@ -60,26 +60,24 @@ public class Usuario {
 
 		String[] columnNames = {"nombres","apellidos","matricula","puesto","sexo","campus","dob","correo","celular","alergias","comida","medicina","vegetariano","dieta","capacitado","camiseta","contactoemergencia","parentesco","telemergencia","aseguradora","poliza","vence"};
 
-		String[] puestos = {"Participante","Staff","Instructor","Coordinador","Coordinador DAE"};
 		String[] parentescos = {"Padre","Madre","Herman@","Abuel@","Tutor"};
 
 
-		String value = "", query = "", temp="";
+		String value = "", query = "", temp = "";
 		int choice;
 
 		System.out.println("Introduzca los siguientes datos");
 		int i = 0;
 
 		// Pedir y registrar nombre, apellido y matrícula
-		do{
+		for (; i <= 2; i++) {			
 			System.out.println(inputs[i]+":");
 			value = scan.nextLine();
-			temp = "'" + value + "',";
-			query += temp;
-			i++;
-		}while(i<=2);
+			query += "'" + value + "',";
+		}
 
 		// Pedir puesto
+		String[] puestos = {"Participante","Staff","Instructor","Coordinador","Coordinador DAE"};
 		System.out.println(inputs[3] + ": \n1 Participante\n2 Staff\n3 Instructor\n4 Coordinador\n5 Coordinador DAE");
 		do{
 			choice = scan.nextInt();
@@ -89,144 +87,115 @@ public class Usuario {
 				choice = 0;
 			}
 		}while(choice == 0);
+
+
 		// Registrar puesto
-		value=puestos[choice-1];
-		
-		temp = "'" + value + "',";
-		query += temp;
+		value = puestos[choice-1];
+		query += "'" + value + "',";
 
 		// Pedir y regsitrar género
-		int j = 0;
-		System.out.println(inputs[4] + ": (H/M)");
-		scan.nextLine();//Clear buffer
-
+		System.out.println(inputs[4] + ": (H/M)"); // Genero: 
+		scan.nextLine(); //Clear buffer
 		do{
-			value = scan.nextLine();
-
-			if(!value.toUpperCase().equals("H") || !value.toUpperCase().equals("M"))
+			value = (scan.nextLine()).toUpperCase();
+			if(!value.equals("H") || !value.equals("M"))
 				System.out.println("Opción inválida, intente nuevamente");
-		}while(!value.toUpperCase().equals("H") || !value.toUpperCase().equals("M"));
-
-		temp = "'" + value.toUpperCase() + "',";
-		query += temp;
+		}while(!value.equals("H") || !value.equals("M"));
 
 
-
+		query += "'" + value + "',";
 
 		// Pedir y registrar campus
-		j=0;
 		int digit = 0;
-		System.out.println(inputs[5]+":"); // Campus: 
+		System.out.println(inputs[5] + ":"); // Campus: 
 
 		// Imprimir lista de campus
 		for (int k = 0; k < campusArray.length; k++)
 			System.out.println(k+1 +" " + campusArray[k]);
 
 		do{
-		
 			digit = scan.nextInt();
-
-			if(digit>=1 && digit<=38){
-				value = campusArray[digit-1];
-				temp = "'" + value + "',";
-				query += temp;
-				j = 1;
-			} else{
-				j = 0;
+			if(digit >= 1 && digit <= 38){
+				query += "'" + campusArray[digit-1] + "',";
+			} else
 				System.out.println("Opción inválida, intente nuevamente");
-			}
-		}while(j == 0);
-
-
+		}while(digit < 1 || digit > 38);
 
 
 		// Pedir y registrar DOB
 		System.out.println(inputs[6] + ": (YYYY-MM-DD)");
-		scan.nextLine();//Clear buffer
+		scan.nextLine(); //Clear buffer
 		value = scan.nextLine();
 		
-		temp = "'" + value + "',";
-		query += temp;
+		// Validate DOB PENDING
+		query += "'" + value + "',";
+
 
 		// Pedir y registrar correo y celular
-		//scan.nextLine();//Clear buffer
-		i = 7;
-		do{
+		// scan.nextLine();//Clear buffer
+
+		for (i = 7; i <= 8 ; i++) {
 			System.out.println(inputs[i]+":");
 			value = scan.nextLine();
-			temp = "'" + value + "',";
-			query += temp;
-			i++;
-		}while(i<=8);
+			query += "'" + value + "',";			
+		}
 
 		// Pedir si existen alergias
-		j = 0;
-		System.out.println(inputs[9]+": (Y/N)");
+		System.out.println(inputs[9] + ": (Y/N)"); // Alergias: (Y/N) 
 		do{
 			value = scan.nextLine();
-			if((value.toUpperCase()).equals("Y")){
-				j = 1;
-				temp = "'" + value.toUpperCase() + "',";
-				query += temp;
-				
+			value = value.toUpperCase();
+			if(value.equals("Y")){
+
+				query += "'" + value + "',";				
+
 				// Verificiar si tiene alergias a alimentos
-				int l = 0;
 				System.out.println("Alergias a alimentos: (Y/N)");
 				do{
 					value = scan.nextLine();
-					if((value.toUpperCase()).equals("Y")){
-						l = 1;
+					value = value.toUpperCase();
+					if(value.equals("Y")){
 						System.out.println("Alergias a alimentos:");
 						value = scan.nextLine();
-						temp = "'" + value + "',";
-						query += temp;
-					} else if((value.toUpperCase()).equals("N")){
-						l = 1;
+						query += "'" + value + "',";
+					} else if(value.equals("N")){
 						value = "NULL";
 						temp = value + ",";
 						query += temp;
-					} else{
-						l = 0;
+					} else
 						System.out.println("Opción inválida, intente nuevamente");
-					}
-				}while(l == 0);
+				}while(!value.equals("Y") && !value.equals("N"));
 			
 				// Verificar si tiene alergias a medicamentos
-				l = 0;
 				System.out.println("Alergias a medicamentos: (Y/N)");	
 				do{
 					value = scan.nextLine();
-					if((value.toUpperCase()).equals("Y")){
-						l = 1;
+					value = value.toUpperCase();
+					if(value.equals("Y")){
 						System.out.println("Alergias a medicamentos:");
 						value = scan.nextLine();
-						temp = "'" + value + "',";
-						query += temp;
-					} else if((value.toUpperCase()).equals("N")){
-						l = 1;
+						query += "'" + value + "',";
+					} 
+					else if(value.equals("N")){
 						value = "NULL";
-						temp = value + ",";
-						query += temp;
-					} else{
-						l = 0;
+						query += value + ",";
+					} 
+					else
 						System.out.println("Opción inválida, intente nuevamente");
-					}
-				}while(l == 0);
-			}else if((value.toUpperCase()).equals("N")){
-				j = 1;
-				for(int o = 0; o<3; o++){
-					value = "NULL";
-						temp = value + ",";
-						query += temp;
-				}
-			} else{
-				j = 0;
-				System.out.println("Opción inválida, intente nuevamente");
+				}while(!value.equals("Y") && !value.equals("N"));
 			}
-		}while(j == 0);
+			else if(value.equals("N")){
+				for(int o = 0; o < 3; o++){
+					value = "NULL";
+					query += value + ",";
+				}
+			}
+			else
+				System.out.println("Opción inválida, intente nuevamente");
+		}while(!value.equals("Y") && !value.equals("N"));
 
 		// Pedir si es vegetariano
-		j = 0;
+		int j = 0;
 		System.out.println("Vegetariano: (Y/N)");
 
 		do{
