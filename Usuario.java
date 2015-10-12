@@ -15,6 +15,20 @@ public class Usuario {
 	private int campus;
 	private Cuarto room;
 
+	// Default constructor
+	public Usuario(){
+		nombre = apellido = matricula = genero = correo = celular = puesto = food = medicina = dieta = camiseta = "";
+		capacitado = vegetariano = alergias = false;
+		campus = -1;
+		room = new Cuarto();
+	}
+	public Usuario(String puesto){
+		nombre = apellido = matricula = genero = correo = celular = food = medicina = dieta = camiseta = "";
+		this.puesto = puesto;
+		capacitado = vegetariano = alergias = false;
+		campus = -1;
+		room = new Cuarto();
+	}
 
 	private String[]  tableHeader = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento", "Cuarto"};
 	
