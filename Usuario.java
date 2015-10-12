@@ -15,9 +15,11 @@ public class Usuario {
 	private int campus;
 	private Cuarto room;
 
-	
 
-	private String[]  tableHeader = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento"};
+	private String[]  tableHeader = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento", "Cuarto"};
+	
+	public String[] campusArray = {"Aguascalientes","Central de Veracruz","Chiapas","Chihuahua","Ciudad de México","Ciudad Juárez","Ciudad Obregón","Cuernavaca","Cumbres","Estado de México","Eugenio Garza Lagüera","Eugenio Garza Sada","Guadalajara","Hidalgo","Irapuato","Laguna","León","Morelia","Puebla","Querétaro","Saltillo","San Luis Potosí","Santa Catarina","Santa Fe","Sinaloa","Sonora Norte","Tampico","Toluca","Valle Alto","Zacatecas","Prep School El Paso","Sede Celaya","Sede Colima","Sede Esmeralda","Sede Matamoros","Sede Metepec","Sede Navojoa","Sede Santa Anita"};
+	
 	String value;
 
 	public Connection connect(){
@@ -38,7 +40,7 @@ public class Usuario {
 
 		/*
 		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM carnero ORDER BY id DESC LIMIT 1");
+		ResultSet rs = stmt.executeQuery("SELECT * FROM usuarios ORDER BY id DESC LIMIT 1");
 		rs.next();
 		id = rs.getInt(1);
 		 */
@@ -46,7 +48,7 @@ public class Usuario {
 	}
 
 	// Statement stmt = conn.createStatement();
-	// ResultSet rs = stmt.executeQuery("SELECT * FROM carnero ORDER BY id DESC LIMIT 1");
+	// ResultSet rs = stmt.executeQuery("SELECT * FROM usuarios ORDER BY id DESC LIMIT 1");
 	// rs.next();
 	// id = rs.getInt(1);
 
@@ -61,7 +63,6 @@ public class Usuario {
 		String[] puestos = {"Participante","Staff","Instructor","Coordinador","Coordinador DAE"};
 		String[] parentescos = {"Padre","Madre","Herman@","Abuel@","Tutor"};
 
-		String[] campus = {"Aguascalientes","Central de Veracruz","Chiapas","Chihuahua","Ciudad de México","Ciudad Juárez","Ciudad Obregón","Cuernavaca","Cumbres","Estado de México","Eugenio Garza Lagüera","Eugenio Garza Sada","Guadalajara","Hidalgo","Irapuato","Laguna","León","Morelia","Puebla","Querétaro","Saltillo","San Luis Potosí","Santa Catarina","Santa Fe","Sinaloa","Sonora Norte","Tampico","Toluca","Valle Alto","Zacatecas","Prep School El Paso","Sede Celaya","Sede Colima","Sede Esmeralda","Sede Matamoros","Sede Metepec","Sede Navojoa","Sede Santa Anita"};
 
 		String value = "", query = "", temp="";
 		int choice;
@@ -102,9 +103,9 @@ public class Usuario {
 		do{
 			value = scan.nextLine();
 
-			if(!value.toUpperCase.equals("H") || !value.toUpperCase.equals("M"))
+			if(!value.toUpperCase().equals("H") || !value.toUpperCase().equals("M"))
 				System.out.println("Opción inválida, intente nuevamente");
-		}while(!value.toUpperCase.equals("H") || !value.toUpperCase.equals("M"));
+		}while(!value.toUpperCase().equals("H") || !value.toUpperCase().equals("M"));
 
 		temp = "'" + value.toUpperCase() + "',";
 		query += temp;
@@ -118,15 +119,15 @@ public class Usuario {
 		System.out.println(inputs[5]+":"); // Campus: 
 
 		// Imprimir lista de campus
-		for (int k = 0; k < campus.length; k++)
-			System.out.println(k+1 +" " + campus[k]);
+		for (int k = 0; k < campusArray.length; k++)
+			System.out.println(k+1 +" " + campusArray[k]);
 
 		do{
 		
 			digit = scan.nextInt();
 
 			if(digit>=1 && digit<=38){
-				value = campus[digit-1];
+				value = campusArray[digit-1];
 				temp = "'" + value + "',";
 				query += temp;
 				j = 1;
@@ -357,7 +358,7 @@ public class Usuario {
 			columnary = columnary + temp;
 		}
 		
-		String insert = "INSERT INTO carnero(" + columnary + ") VALUES(" + query + ")";
+		String insert = "INSERT INTO usuarios(" + columnary + ") VALUES(" + query + ")";
 
 		Connection connection = this.connect();
 		try{
@@ -395,8 +396,8 @@ public class Usuario {
 					choice = scan.nextInt();
 						switch(choice){
 							case 1:
-							column = "NOMBRES";
-							break;
+								column = "NOMBRES";
+								break;
 							case 2:
 								column = "APELLIDOS";
 								break;
@@ -422,31 +423,31 @@ public class Usuario {
 							case 8:
 								column = "CAMPUS";
 								String[] campus = {"Aguascalientes","Central de Veracruz","Chiapas","Chihuahua","Ciudad de México","Ciudad Juárez","Ciudad Obregón","Cuernavaca","Cumbres","Estado de México","Eugenio Garza Lagüera","Eugenio Garza Sada","Guadalajara","Hidalgo","Irapuato","Laguna","León","Morelia","Puebla","Querétaro","Saltillo","San Luis Potosí","Santa Catarina","Santa Fe","Sinaloa","Sonora Norte","Tampico","Toluca","Valle Alto","Zacatecas","Prep School El Paso","Sede Celaya","Sede Colima","Sede Esmeralda","Sede Matamoros","Sede Metepec","Sede Navojoa","Sede Santa Anita"};
+								// Imprimir lista de campus
+								for (int i=0; i<campus.length; i++)
+									System.out.println(i+1 +" " + campus[i]);
 
-							// Imprimir lista de campus
-							for (int i=0; i<campus.length; i++)
-								System.out.println(i+1 +" " + campus[i]);
+								System.out.println("Introduzca el campus");
+								scan.nextLine(); // Clear buffer
+								int opcion = scan.nextInt();
+								value = campus[opcion-1];
 
-							System.out.println("Introduzca el campus");
-							scan.nextLine(); // Clear buffer
-							int opcion = scan.nextInt();
-							value = campus[opcion-1];
-							break;
-						case 9:
+								break;
+							case 9:
 							column = "PUESTO";
 							break;
-						default:
+							default:
 						System.out.println("Opción inválida, intente nuevamente");
 						choice=0;
 						}
 					}while(choice == 0);
 					
-					if((choice != 8) && (choice != 5)){				
+					if((choice != 5) && (choice != 8)){				
 							System.out.println("Introduzca el nuevo dato");
 							scan.nextLine();
 							value = scan.nextLine();
 					}
-					query = "UPDATE carnero SET "+ column + "='"+ value + "' WHERE ID=" + id;
+					query = "UPDATE usuarios SET "+ column + "='"+ value + "' WHERE ID=" + id;
 
 					break;
 				// Modificación de datos médicos
@@ -459,9 +460,12 @@ public class Usuario {
 						column = "ALERGIAS";
 						System.out.println("¿Alergias? Y/N");
 						scan.nextLine(); // Clear buffer
-						alergias = scan.nextLine();
+						String input = scan.nextLine();// temporary variable
+						if(((input.toUpperCase()).equals("Y"))){
+							alergias = true;
+						}
 
-						if(alergias.toUpperCase().equals("Y")){
+						if(alergias){
 
 							String column2 = "", newValue = "";
 							do{
@@ -493,19 +497,19 @@ public class Usuario {
 									column2 = COMIDA/MEDICINA
 
 							 */
-							query = "UPDATE carnero SET "+ column + "='"+ alergias.toUpperCase() +"', " + column2 + "='" + newValue + "' WHERE ID="+id;
+							query = "UPDATE usuarios SET "+ column + "='"+ alergias +"', " + column2 + "='" + newValue + "' WHERE ID="+id;
 
 						} 
 						// Si no tiene alergias
-						else if(alergias.toUpperCase().equals("N")){
+						else if(!alergias){
 							/*
 									Incluir descripcion de justificacion de este metodo
 							 */
 							String value2 = "COMIDA";
 							String value3 = "MEDICINA";
-							query = "UPDATE carnero SET "+ column + "='"+ alergias.toUpperCase() +"', " + value2 + "= NULL, " + value3 + "= NULL WHERE ID=" + id;
+							query = "UPDATE usuarios SET "+ column + "='"+ alergias +"', " + value2 + "= NULL, " + value3 + "= NULL WHERE ID=" + id;
 						} 
-						else{
+						else if(!(input.equals("Y")) && !(input.equals("N"))){
 							System.out.println("Opción inválida");
 						}
 						break;
@@ -519,12 +523,12 @@ public class Usuario {
 						if((dieta.toUpperCase()).equals("Y")){
 							System.out.println("Introduzca la dieta especial");
 							dieta = scan.nextLine();
-							query = "UPDATE carnero SET "+ column + "='"+ dieta + "' WHERE ID="+id;
+							query = "UPDATE usuarios SET "+ column + "='"+ dieta + "' WHERE ID="+id;
 						}
 
 						//Si no tiene dieta especial
 						else if((dieta.toUpperCase()).equals("N")){
-							query = "UPDATE carnero SET "+ column + "= NULL WHERE ID="+id;
+							query = "UPDATE usuarios SET "+ column + "= NULL WHERE ID="+id;
 						}
 
 						else{
@@ -545,28 +549,38 @@ public class Usuario {
 						column = "VEGETARIANO";
 						System.out.println("¿Vegetariano? Y/N");
 						scan.nextLine();//Clear buffer
-						vegetariano = scan.nextLine();
+						String input = scan.nextLine();
 
-						while(!((vegetariano.toUpperCase()).equals("Y")) && !((vegetariano.toUpperCase()).equals("N"))){//Repetir si no es Y o N{
+						while(!((input.toUpperCase()).equals("Y")) && !((input.toUpperCase()).equals("N"))){//Repetir si no es Y o N
 							System.out.println("Opción inválida, intente nuevamente");
-							vegetariano = scan.nextLine();
+							
+							if((input.toUpperCase()).equals("Y")){
+								vegetariano = true;
+							} else {
+								vegetariano = false;
+							}
 						}
-
-						value = vegetariano.toUpperCase();
+						query = "UPDATE usuarios SET "+ column + "='"+ vegetariano + "' WHERE ID=" + id;
 						break;
 
 					case 2:
 						column = "CAPACITADO";
 						System.out.println("¿Capacitado previamente? Y/N");
 						scan.nextLine();//Clear buffer
-						capacitado = scan.nextLine();
+						input = scan.nextLine();//temporary
 
-						while(!((capacitado.toUpperCase()).equals("Y")) && !((capacitado.toUpperCase()).equals("N"))){//Repetir si no es Y o N
+						while(!((input.toUpperCase()).equals("Y")) && !((input.toUpperCase()).equals("N"))){//Repetir si no es Y o N
 							System.out.println("Opción inválida, intente nuevamente");
-							capacitado = scan.nextLine();
+							input = scan.nextLine();
 						}
 
-						value = capacitado.toUpperCase();
+						if((input.toUpperCase()).equals("Y")){
+							capacitado = true;
+						} else {
+							capacitado = false;
+						}
+
+						query = "UPDATE usuarios SET "+ column + "='"+ capacitado + "' WHERE ID=" + id;
 						break;
 
 					case 3:
@@ -581,10 +595,9 @@ public class Usuario {
 						}
 
 						value = camiseta.toUpperCase();
+						query = "UPDATE usuarios SET "+ column + "='"+ value + "' WHERE ID=" + id;
 						break;
 					}
-					query = "UPDATE carnero SET "+ column + "='"+ value + "' WHERE ID=" + id;
-
 					break;
 				// Modificación de datos de emergencia
 				case 4:
@@ -619,7 +632,7 @@ public class Usuario {
 								System.out.println("Introduzca el nuevo dato");
 								scan.nextLine();
 								value = scan.nextLine();
-								query = "UPDATE carnero SET "+ column + "='"+ value + "' WHERE ID=" + id;
+								query = "UPDATE usuarios SET "+ column + "='"+ value + "' WHERE ID=" + id;
 								break;
 
 							case 2:
@@ -653,7 +666,7 @@ public class Usuario {
 									scan.nextLine();
 									value = scan.nextLine();
 								}
-								query = "UPDATE carnero SET "+ column + "='"+ value + "' WHERE ID=" + id;
+								query = "UPDATE usuarios SET "+ column + "='"+ value + "' WHERE ID=" + id;
 								break;
 							
 							default:
@@ -688,7 +701,7 @@ public class Usuario {
 		try{
 			System.out.println("Introduzca el ID del usuario a eliminar");
 			id = scan.nextInt();
-			query = "SELECT nombres, apellidos FROM carnero WHERE ID=" + id;
+			query = "SELECT nombres, apellidos FROM usuarios WHERE ID=" + id;
 						
 			stmt = connection.createStatement();
 
@@ -700,7 +713,7 @@ public class Usuario {
 			choice = scan.nextLine();
 
 			if((choice.toUpperCase()).equals("Y")){
-				query = "DELETE FROM carnero WHERE ID="+id;
+				query = "DELETE FROM usuarios WHERE ID="+id;
 				stmt.executeUpdate(query);
 				System.out.println("Usuario eliminado exitosamente");
 			} else {
@@ -727,7 +740,7 @@ public class Usuario {
 			choice = scan.nextLine();
 
 			if((choice.toUpperCase()).equals("Y")){
-				stmt.executeUpdate("TRUNCATE TABLE carnero");
+				stmt.executeUpdate("TRUNCATE TABLE usuarios");
 				System.out.println("Tabla borrada exitosamente");
 			} else {
 				System.out.println("Cancelado");
@@ -741,7 +754,7 @@ public class Usuario {
 /*
 //COUNT ROWS
 
-ResultSet rs= stmt.executeQuery("SELECT COUNT(*) FROM CARNERO");
+ResultSet rs= stmt.executeQuery("SELECT COUNT(*) FROM usuarios");
 rs.next();
 int count = rs.getInt(1);
 */
@@ -752,7 +765,7 @@ int count = rs.getInt(1);
 
 		try{
 			stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM CARNERO ORDER BY ID ASC");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM usuarios ORDER BY ID ASC");
 
 			for(int i=0; i<tableHeader.length; i++)
 				System.out.print(tableHeader[i]+"\t");
@@ -766,7 +779,7 @@ int count = rs.getInt(1);
 				String matricula = rs.getString(4);
 				String puesto = rs.getString(5);
 				String genero = rs.getString(6);
-				int digit = rs.getString(7);
+				int digit = rs.getInt(7);
 				String dob = rs.getString(8);
 				String correo = rs.getString(9);
 				String celular = rs.getString(10);
@@ -777,8 +790,9 @@ int count = rs.getInt(1);
 				String dieta = rs.getString(15);
 				String capacitacion = rs.getString(16);
 				String camiseta = rs.getString(17);
+				String room = rs.getString(18);
 
-				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campus[digit-1] + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta);
+				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campusArray[digit-1] + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta + "\t" + room);
 			}
 			rs.close();
 			connection.close();
@@ -803,7 +817,7 @@ int count = rs.getInt(1);
 			stmt.execute("CALL FT_REINDEX()");
 	
 			System.out.println(search);
-			query = "SELECT T.* FROM FT_SEARCH_DATA('" + search + "', 0, 0) FT, CARNERO T WHERE FT.TABLE='CARNERO' AND T.ID=FT.KEYS[0]";  
+			query = "SELECT T.* FROM FT_SEARCH_DATA('" + search + "', 0, 0) FT, usuarios T WHERE FT.TABLE='usuarios' AND T.ID=FT.KEYS[0]";  
 			ResultSet rs = stmt.executeQuery(query);
 			
 			// Print header
