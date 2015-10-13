@@ -1,4 +1,10 @@
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import org.h2.jdbcx.JdbcDataSource;
 import java.util.Scanner;
+
 public class Actividad{
 
 	// Declaracion de variables
@@ -23,16 +29,29 @@ public class Actividad{
 		createJoinEntries();
 	}
 	private int saveToDB(){
+		String query = "";
 		if(act_id != -1){
 			System.out.println("Ya existe esta actividad en la base de datos.");
 			return 0;
 		}
-
-		// Parse DATE
-		// CREAR Query
-		// STORE
-		// Guardar en una variable el insertion id
-		// return el id;
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+			
+			query = "INSERT INTO actividad(nombre, fecha_inicio, fecha_fin, sede) VALUES(" + this.nombre + ", " + this.fechaInicio + ", " + this.fechaFin + ", " + this.sede + ")";
+			
+			stmt.executeUpdate(query);
+			
+			query = "SELECT TOP 1 ID FROM actividad ORDER BY ID DESC";
+			
+			ResultSet rs = stmt.executeQuery(query);
+			
+			act_id = rs.getInt(1);
+			return act_id;
+		} catch(SQLException e){
+			System.out.println(e.getMessage());
+			return -1;
+		}
 	}
 	public int getAsistentes(){
 		return asistentes(this.act_id);
@@ -41,6 +60,7 @@ public class Actividad{
 		return asistentes(act_id);
 	}
 	private static int asistentes(int act_id){
+		// "SELECT * FROM ASISTENCIA_ACTIVIDAD WHERE actividad_id = " + act_id + " JOIN USUARIO ON asistencia_actividad.usuario_id = usuario.id
 		// SELECT * FROM ASISTENCIA_ACTIVIDAD WHERE actividad_id = act_id JOIN USUARIO ON asistencia_actividad.usuario_id = usuario.id
 		// Iterate over resultSet and print it, count number of assistants = TRUE
 		// return count
@@ -64,17 +84,39 @@ public class Actividad{
 
 
 	// Getters
-	public String getNombre(){return nombre;}
-	public String getFechaInicio(){return fechaInicio;}
-	public String getFechaFin(){return fechaFin;}
-	public String getSede(){return sede;}
-	public Usuario getEncargado(){return encargado;}
-	public int getID(){return act_id;}
+	public String getNombre(){
+		return nombre;
+	}
+	public String getFechaInicio(){
+		return fechaInicio;
+	}
+	public String getFechaFin(){
+		return fechaFin;
+	}
+	public String getSede(){
+		return sede;
+	}
+	public Usuario getEncargado(){
+		return encargado;
+	}
+	public int getID(){
+		return act_id;
+	}
 
 	// Setters
-	public void setNombre(String nombre){this.nombre = nombre;}
-	public void setFechaInicio(String fechaInicio){this.fechaInicio = fechaInicio;}
-	public void setFechaFin(String fechaFin){this.fechaFin = fechaFin;}
-	public void setSede(String sede){this.sede = sede;}
-	public void setEncargado(Usuario encargado){this.encargado = encargado;}
+	public void setNombre(String nombre){
+		this.nombre = nombre;
+	}
+	public void setFechaInicio(String fechaInicio){
+		this.fechaInicio = fechaInicio;
+	}
+	public void setFechaFin(String fechaFin){
+		this.fechaFin = fechaFin;
+	}
+	public void setSede(String sede){
+		this.sede = sede;
+	}
+	public void setEncargado(Usuario encargado){
+		this.encargado = encargado;
+	}
 }

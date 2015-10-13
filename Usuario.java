@@ -36,7 +36,7 @@ public class Usuario {
 	
 	String value;
 
-	public Connection connect(){
+	/* public Connection connect(){
 		// private int id;
 		//Create DataSource
 		JdbcDataSource ds = new JdbcDataSource();
@@ -51,20 +51,7 @@ public class Usuario {
 			System.out.println(e.getMessage());
 		}
 		return c;
-
-		/*
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM usuarios ORDER BY id DESC LIMIT 1");
-		rs.next();
-		id = rs.getInt(1);
-		 */
-
-	}
-
-	// Statement stmt = conn.createStatement();
-	// ResultSet rs = stmt.executeQuery("SELECT * FROM usuarios ORDER BY id DESC LIMIT 1");
-	// rs.next();
-	// id = rs.getInt(1);
+	} */
 
 	public void add(){
 		//Agregar persona
@@ -342,8 +329,9 @@ public class Usuario {
 		}
 		
 		String insert = "INSERT INTO usuarios(" + columnary + ") VALUES(" + query + ")";
-
-		Connection connection = this.connect();
+ 
+		
+		Connection connection = Database.connect();;
 		try{
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate(insert);
@@ -359,7 +347,7 @@ public class Usuario {
 		int choice;
 
 		// Iniciar la conexión con la BD
-		Connection connection = this.connect();
+		Connection connection = Database.connect();
 
 		// Referenciar al usuario a editar
 		System.out.println("Introduzca el ID de la persona a editar");
@@ -678,7 +666,7 @@ public class Usuario {
 		String choice = "", query = "";
 
 		// Get DB connection
-		Connection connection = this.connect();
+		Connection connection = Database.connect();
 		Statement stmt;
 		
 		try{
@@ -714,7 +702,7 @@ public class Usuario {
 		String choice = "";
 		Statement stmt;
 		
-		Connection connection = this.connect();
+		Connection connection = Database.connect();
 		try{
 			stmt = connection.createStatement();
 			// Comprobar si desea borrar la tabla
@@ -743,7 +731,7 @@ int count = rs.getInt(1);
 */
 	public void printTable(){
 		// Print user info
-		Connection connection = this.connect();
+		Connection connection = Database.connect();
 		Statement stmt;
 
 		try{
@@ -787,7 +775,7 @@ int count = rs.getInt(1);
 	
 	public void search(){
 		Scanner scan = new Scanner(System.in);
-		Connection connection = this.connect();
+		Connection connection = Database.connect();
 		Statement stmt;
 		String search, query;
 		
