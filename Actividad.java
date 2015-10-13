@@ -24,7 +24,7 @@ public class Actividad{
 	}
 	private int saveToDB(){
 		if(act_id != -1){
-			System.out.println("Ya existe esta actividad en al base de datos.");
+			System.out.println("Ya existe esta actividad en la base de datos.");
 			return 0;
 		}
 
