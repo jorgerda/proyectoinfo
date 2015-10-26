@@ -35,14 +35,12 @@ public class Actividad{
 			Connection conn = Database.connect();
 			Statement stmt = conn.createStatement();
 			
-			String query = "INSERT INTO actividad(nombre, fecha_inicio, fecha_fin, sede) VALUES(" + this.nombre + ", " + this.fechaInicio + ", " + this.fechaFin + ", " + this.sede + ")";
-			
-			stmt.executeUpdate(query);
-			
+			String query = "INSERT INTO actividad(nombre, fecha_inicio, fecha_fin, sede) VALUES('" + this.nombre + "','" + this.fechaInicio + "','" + this.fechaFin + "','" + this.sede + "')";
+			stmt.execute(query);
 			query = "SELECT TOP 1 ID FROM actividad ORDER BY ID DESC";
 			
 			ResultSet rs = stmt.executeQuery(query);
-			
+			rs.next();
 			act_id = rs.getInt(1);
 			conn.close();
 
@@ -91,9 +89,8 @@ public class Actividad{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()){
 				boolean asistencia = rs.getBoolean(4);
-				if(asistencia){
+				if(asistencia)
 					count++;
-				}
 			}
 			conn.close();
 		} catch(SQLException e){
@@ -162,15 +159,15 @@ public class Actividad{
 			Connection conn = Database.connect();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT id FROM usuarios");
-			String query = "INSERT INTO asistencia_actividad (actividad_id, usuario_id) VALUES ";
-			while(rs.next())
+			String query = "INSERT INTO asistencia_actividad(actividad_id, usuario_id) VALUES ";
+			while(rs.next()){
 				query += "(" + act_id + ", " + rs.getInt(1)+"), ";
+			}
 			// Quita la coma final
 			query = query.substring(0, query.length()-2);
 			query += ";";
 			
-			Statement stmt2 = conn.createStatement();
-			stmt2.execute(query);
+			stmt.execute(query);
 
 			conn.close();
 			return true;

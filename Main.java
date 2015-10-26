@@ -20,7 +20,6 @@ public class Main {
 			l = checkDate(fechaInicio);//Valida la fecha y hora
 		}
 		fechaInicio += ":00";//Agrega milisegundos
-		System.out.println(fechaInicio);
 		
 		System.out.println("Introduzca la fecha de conclusión (YYYY-MM-DD hh:mm)");
 		l = 0;
@@ -29,7 +28,6 @@ public class Main {
 			l = checkDate(fechaFin);//Valida la fecha y hora
 		}
 		fechaFin += ":00";//Agrega milisegundos
-		System.out.println(fechaFin);
 				
 		System.out.println("Introduzca la sede de la actividad");
 		sede = scan.nextLine();
@@ -55,6 +53,7 @@ public class Main {
 		}
 		int choice = scan.nextInt();
 		Usuario encargado = new Usuario(choice); //Establece el usuario con los datos del encargado
+		System.out.println("It's me");
 		Actividad nuevaActividad = new Actividad(nombre, fechaInicio, fechaFin, sede, encargado);//Crea la actividad
 		if(nuevaActividad.saveToDB())
 			System.out.println("Actividad agregada exitosamente.");

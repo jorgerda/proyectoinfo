@@ -33,23 +33,24 @@ public class Usuario {
 		try{
 			Connection conn = Database.connect();
 			Statement stmt = conn.createStatement();
-			String query = "SELECT * FROM USUARIOS WHERE ID =" + id;
-			ResultSet rs = stmt.executeQuery(query);
-			nombre = rs.getString(2);
-			apellido = rs.getString(3);
-			matricula = rs.getString(3);
-			puesto = rs.getString(5);
-			genero = rs.getString(6);
-			campus = rs.getInt(7);
-			correo = rs.getString(9);
-			celular = rs.getString(10);
-			alergias = rs.getBoolean(11);
-			food = rs.getString(12);
-			medicina = rs.getString(13);
-			vegetariano = rs.getBoolean(14);
-			dieta = rs.getString(15);
-			capacitado = rs.getBoolean(16);
-			camiseta = rs.getString(17);
+			String query = "SELECT * FROM USUARIOS WHERE ID=" + id;
+			ResultSet set = stmt.executeQuery(query);
+			set.next();
+			nombre = set.getString(2);
+			apellido = set.getString(3);
+			matricula = set.getString(4);
+			puesto = set.getString(5);
+			genero = set.getString(6);
+			campus = set.getInt(7);
+			correo = set.getString(9);
+			celular = set.getString(10);
+			alergias = set.getBoolean(11);
+			food = set.getString(12);
+			medicina = set.getString(13);
+			vegetariano = set.getBoolean(14);
+			dieta = set.getString(15);
+			capacitado = set.getBoolean(16);
+			camiseta = set.getString(17);
 			conn.close();
 		}catch(SQLException e){
 			System.out.println(e.getMessage());
@@ -975,7 +976,7 @@ int count = rs.getInt(1);
 			System.out.println("Introduzca el dato a buscar");
 			search = scan.nextLine();
 			// Especial casos de ints como el campus
-			query = "SELECT * FROM USUARIOS WHERE "+columnNames[choice-1]+" LIKE '%"+ search + "%'";
+			query = "SELECT * FROM USUARIOS WHERE LOWER("+columnNames[choice-1]+") LIKE LOWER('%"+ search + "%')";
 			ResultSet rs = stmt.executeQuery(query);
 			// Print header
 			for(int i=0; i<tableHeader.length; i++){
