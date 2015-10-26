@@ -8,14 +8,14 @@ import org.h2.jdbcx.JdbcDataSource;
 
 public class Usuario {
 
-	// Declaracion de variables
+	// Declaración de variables
 	// Propiedades del usuario
 	private String nombre, apellido, matricula, genero, correo, celular, puesto, food, medicina, dieta, camiseta;
 	private boolean capacitado, vegetariano, alergias;
 	private int campus;
 	private Cuarto room;
 
-	// Default constructor
+	// Constructor predefinido
 	public Usuario(){
 		nombre = apellido = matricula = genero = correo = celular = puesto = food = medicina = dieta = camiseta = "";
 		capacitado = vegetariano = alergias = false;
@@ -29,37 +29,45 @@ public class Usuario {
 		campus = -1;
 		room = new Cuarto();
 	}
+	public Usuario(int id){
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+			String query = "SELECT * FROM USUARIOS WHERE ID =" + id;
+			ResultSet rs = stmt.executeQuery(query);
+			nombre = rs.getString(2);
+			apellido = rs.getString(3);
+			matricula = rs.getString(3);
+			puesto = rs.getString(5);
+			genero = rs.getString(6);
+			campus = rs.getInt(7);
+			correo = rs.getString(9);
+			celular = rs.getString(10);
+			alergias = rs.getBoolean(11);
+			food = rs.getString(12);
+			medicina = rs.getString(13);
+			vegetariano = rs.getBoolean(14);
+			dieta = rs.getString(15);
+			capacitado = rs.getBoolean(16);
+			camiseta = rs.getString(17);
+			conn.close();
+		}catch(SQLException e){
+			System.out.println(e.getMessage());
+		}
+	}
 
 	private String[]  tableHeader = {"ID","Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","A. Alimentos","A. Medicamentos","Vegetariano","Dieta","Capacitación previa","Talla de camiseta","Contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento", "Cuarto"};
 	
 	public String[] campusArray = {"Aguascalientes","Central de Veracruz","Chiapas","Chihuahua","Ciudad de México","Ciudad Juárez","Ciudad Obregón","Cuernavaca","Cumbres","Estado de México","Eugenio Garza Lagüera","Eugenio Garza Sada","Guadalajara","Hidalgo","Irapuato","Laguna","León","Morelia","Puebla","Querétaro","Saltillo","San Luis Potosí","Santa Catarina","Santa Fe","Sinaloa","Sonora Norte","Tampico","Toluca","Valle Alto","Zacatecas","Prep School El Paso","Sede Celaya","Sede Colima","Sede Esmeralda","Sede Matamoros","Sede Metepec","Sede Navojoa","Sede Santa Anita"};
 	
+	public String[] columnNames = {"nombres","apellidos","matricula","puesto","sexo","campus","dob","correo","celular","alergias","comida","medicina","vegetariano","dieta","capacitado","camiseta","contactoemergencia","parentesco","telemergencia","aseguradora","poliza","vence"}; // 20
 	String value;
-
-	/* public Connection connect(){
-		// private int id;
-		//Create DataSource
-		JdbcDataSource ds = new JdbcDataSource();
-		Connection c = null;
-		try{
-			ds.setURL("jdbc:h2:~/test");
-			ds.setUser("sa");
-			ds.setPassword("sa");
-			c = ds.getConnection();
-		}
-		catch(SQLException e){
-			System.out.println(e.getMessage());
-		}
-		return c;
-	} */
 
 	public void add(){
 		//Agregar persona
 		Scanner scan = new Scanner(System.in);
 
 		String[] inputs = {"Nombres","Apellidos","Matrícula","Puesto","Género","Campus","Fecha de nacimiento","Correo electrónico","Celular","Alergias","Alergias a alimentos","Alergias a medicamentos","Vegetariano","Dieta especial","Capacitado previamente","Talla de camiseta","Nombre del contacto de emergencia","Parentesco","Teléfono de emergencia","Aseguradora","Póliza","Vencimiento"};
-
-		String[] columnNames = {"nombres","apellidos","matricula","puesto","sexo","campus","dob","correo","celular","alergias","comida","medicina","vegetariano","dieta","capacitado","camiseta","contactoemergencia","parentesco","telemergencia","aseguradora","poliza","vence"};
 
 		String[] parentescos = {"Padre","Madre","Herman@","Abuel@","Tutor"};
 
@@ -94,14 +102,14 @@ public class Usuario {
 		value = puestos[choice-1];
 		query += "'" + value + "',";
 
-		// Pedir y regsitrar género
-		System.out.println(inputs[4] + ": (H/M)"); // Genero: 
+		// Pedir y registrar género
+		System.out.println(inputs[4] + ": (H/M)"); // Género: 
 		scan.nextLine(); //Clear buffer
 		do{
-			value = (scan.nextLine()).toUpperCase();
-			if(!value.equals("H") || !value.equals("M"))
+			value = scan.nextLine().toUpperCase();
+			if(!(value.equals("H")) && !(value.equals("M")))
 				System.out.println("Opción inválida, intente nuevamente");
-		}while(!value.equals("H") || !value.equals("M"));
+		}while(!value.equals("H") && !value.equals("M"));
 
 
 		query += "'" + value + "',";
@@ -117,18 +125,59 @@ public class Usuario {
 		do{
 			digit = scan.nextInt();
 			if(digit >= 1 && digit <= 38){
-				query += "'" + campusArray[digit-1] + "',";
+				query += digit + ",";
+				//query += "'" + campusArray[digit-1] + "',";
 			} else
 				System.out.println("Opción inválida, intente nuevamente");
 		}while(digit < 1 || digit > 38);
 
 
 		// Pedir y registrar DOB
-		System.out.println(inputs[6] + ": (YYYY-MM-DD)");
-		scan.nextLine(); //Clear buffer
-		value = scan.nextLine();
-		
-		// Validate DOB PENDING
+		int k = 0;
+		boolean yearCondition = false; //Almacena si el año está en formato correcto
+		boolean monthCondition = false;//Almacena si el año está en formato correcto
+		boolean dayCondition = false;//Almacena si el año está en formato correcto
+		int year, month, day;
+
+		System.out.println(inputs[6] + ": (YYYY-MM-DD)"); //Fecha de nacimiento:
+		// Ingresar y validar la fecha
+		while(k == 0){
+			scan.nextLine(); //Clear buffer
+			value = scan.nextLine();
+
+			year = Integer.parseInt(value.substring(0,4));
+			month = Integer.parseInt(value.substring(5,7));
+			day = Integer.parseInt(value.substring(8,10));
+			
+			//Verifica el año
+			if(year >= 1000 && year <= 2016){
+				yearCondition = true;
+			}
+			//Verifica el mes
+			if(month >= 1 && month <= 12){
+				monthCondition = true;
+			}
+			//Verifica el día según el mes
+			if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){// Verifica si el mes tienen 31 días
+				if(day >= 1 && day <= 31){
+					dayCondition = true;
+				}
+			} else if(month == 4 || month == 6 || month == 9 || month == 11){// Verifica si el mes tiene 30 días
+				if(day >= 1 && day <= 30){
+					dayCondition = true;
+				}
+			} else if(month == 2){
+				if(day >= 1 && day <= 28){
+					dayCondition = true;
+				}
+			}
+			if(yearCondition && monthCondition && dayCondition){
+				k = 1;
+			} else{
+				System.out.println("Fecha inválida, intente nuevamente");
+				k = 0;
+			}
+		}
 		query += "'" + value + "',";
 
 
@@ -143,10 +192,11 @@ public class Usuario {
 
 		// Pedir si existen alergias
 		System.out.println(inputs[9] + ": (Y/N)"); // Alergias: (Y/N) 
+		String inputt;
 		do{
-			value = scan.nextLine();
-			value = value.toUpperCase();
-			if(value.equals("Y")){
+			inputt = scan.nextLine();
+			inputt = inputt.toUpperCase();
+			if(inputt.equals("Y")){
 
 				query += "'" + value + "',";				
 
@@ -185,7 +235,7 @@ public class Usuario {
 						System.out.println("Opción inválida, intente nuevamente");
 				}while(!value.equals("Y") && !value.equals("N"));
 			}
-			else if(value.equals("N")){
+			else if(inputt.equals("N")){
 				for(int o = 0; o < 3; o++){
 					value = "NULL";
 					query += value + ",";
@@ -193,8 +243,7 @@ public class Usuario {
 			}
 			else
 				System.out.println("Opción inválida, intente nuevamente");
-		}while(!value.equals("Y") && !value.equals("N"));
-
+		}while(!inputt.equals("Y") && !inputt.equals("N"));
 		// Pedir si es vegetariano
 		int j = 0;
 		System.out.println("Vegetariano: (Y/N)");
@@ -311,7 +360,51 @@ public class Usuario {
 		query += temp;
 
 		// Pedir vencimiento
-		System.out.println(inputs[21] + ": (YYYY-MM-DD)");
+		k = 0;
+		yearCondition = false; //Almacena si el año está en formato correcto
+		monthCondition = false;//Almacena si el año está en formato correcto
+		dayCondition = false;//Almacena si el año está en formato correcto
+		
+		System.out.println(inputs[21] + ": (YYYY-MM-DD)");//Vencimiento:
+		// Ingresar y validar la fecha
+		while(k == 0){
+			scan.nextLine(); //Clear buffer
+			value = scan.nextLine();
+
+			year = Integer.parseInt(value.substring(0,4));
+			month = Integer.parseInt(value.substring(5,7));
+			day = Integer.parseInt(value.substring(8,10));
+			
+			//Verifica el año
+			if(year >= 1000 && year <= 2030){
+				yearCondition = true;
+			}
+			//Verifica el mes
+			if(month >= 1 && month <= 12){
+				monthCondition = true;
+			}
+			//Verifica el día según el mes
+			if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){// Verifica si el mes tienen 31 días
+				if(day >= 1 && day <= 31){
+					dayCondition = true;
+				}
+			} else if(month == 4 || month == 6 || month == 9 || month == 11){// Verifica si el mes tiene 30 días
+				if(day >= 1 && day <= 30){
+					dayCondition = true;
+				}
+			} else if(month == 2){
+				if(day >= 1 && day <= 28){
+					dayCondition = true;
+				}
+			}
+			if(yearCondition && monthCondition && dayCondition){
+				k = 1;
+			} else{
+				System.out.println("Fecha inválida, intente nuevamente");
+				k = 0;
+			}
+		}
+
 		value = scan.nextLine();
 		temp = "'" + value + "',";
 		query += temp;
@@ -336,6 +429,7 @@ public class Usuario {
 			Statement stmt = connection.createStatement();
 			stmt.executeUpdate(insert);
 			System.out.println("Usuario agregado exitosamente");
+			connection.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -696,7 +790,6 @@ public class Usuario {
 			System.out.println(e.getMessage());
 		}
 	}
-
 	public void resetTable(){
 		Scanner scan = new Scanner(System.in);
 		String choice = "";
@@ -761,9 +854,15 @@ int count = rs.getInt(1);
 				String dieta = rs.getString(15);
 				String capacitacion = rs.getString(16);
 				String camiseta = rs.getString(17);
-				String room = rs.getString(18);
+				String contacto = rs.getString(18);
+				String parentesco = rs.getString(19);
+				String telemergencia = rs.getString(20);
+				String aseguradora = rs.getString(21);
+				String poliza = rs.getString(22);
+				String vencimiento = rs.getString(23);
+				String room = rs.getString(24);
 
-				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campusArray[digit-1] + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta + "\t" + room);
+				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campusArray[digit] + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta + "\t" + contacto + "\t" + parentesco + "\t" + telemergencia + "\t" + aseguradora + "\t" + poliza + "\t" + vencimiento + "\t" + room);
 			}
 			rs.close();
 			connection.close();
@@ -772,25 +871,112 @@ int count = rs.getInt(1);
 			System.out.println(e.getMessage());
 		}
 	}
+	public void printOrdered(){
+		// Print user info ordered by a field
+		Connection connection = Database.connect();
+		Statement stmt;
+		Scanner scan = new Scanner(System.in);
+		String criteria = "";
+		String columnName = "";
+		int choice = 0;
+
+		String[] fields = {"id","nombres","apellidos","matricula","puesto","sexo","campus","dob","correo","celular","alergias","comida","medicina","vegetariano","dieta","capacitado","camiseta","contactoemergencia","parentesco","telemergencia","aseguradora","poliza","vence","cuarto"};
+
+			System.out.println("Introduzca el campo a ordenar:");
+			int k = 0;
+			for(int i = 0; i < tableHeader.length; i++){ //Imprimir las columnas
+				System.out.println((i+1) + ": " + tableHeader[i]);
+			}
+			while(k == 0){ //Validar que el número sea correcto
+				choice = scan.nextInt();
+				if(choice < 0 || choice > 24){
+					System.out.println("Campo inválido, intente nuevamente");
+				} else {
+					k = 1;
+				}
+			}
+			
+			columnName = fields[choice-1]; //Asignar nombre de la columna
+			
+			System.out.println("Ordenar de manera: 1. Ascendiente 2. Descendiente");
+			k = 0;
+			while(k == 0){
+				choice = scan.nextInt();
+				if(choice != 1 && choice!= 2){
+					System.out.println("Criterio inválido, intente nuevamente");
+				} else{
+					k = 1;
+				}
+			}
+
+			if(choice == 1){
+				criteria = "ASC";
+			} else{
+				criteria = "DESC";
+			}
+		try{
+			stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM usuarios ORDER BY " + columnName + " " + criteria);
+
+			for(int i=0; i<tableHeader.length; i++)
+				System.out.print(tableHeader[i]+"\t");
 	
+			System.out.println();
+
+			while(rs.next()){
+				int id = rs.getInt(1);
+				String nombre = rs.getString(2);
+				String apellido = rs.getString(3);
+				String matricula = rs.getString(4);
+				String puesto = rs.getString(5);
+				String genero = rs.getString(6);
+				int digit = rs.getInt(7);
+				String dob = rs.getString(8);
+				String correo = rs.getString(9);
+				String celular = rs.getString(10);
+				String alergias = rs.getString(11);
+				String comida = rs.getString(12);
+				String medicina = rs.getString(13);
+				String vegetariano = rs.getString(14);
+				String dieta = rs.getString(15);
+				String capacitacion = rs.getString(16);
+				String camiseta = rs.getString(17);
+				String contacto = rs.getString(18);
+				String parentesco = rs.getString(19);
+				String telemergencia = rs.getString(20);
+				String aseguradora = rs.getString(21);
+				String poliza = rs.getString(22);
+				String vencimiento = rs.getString(23);
+				String room = rs.getString(24);
+
+				System.out.println(id + "\t" + nombre + "\t" + apellido + "\t" + matricula + "\t" + puesto + "\t" + genero +  "\t" + campusArray[digit] + "\t" + dob + "\t" + correo + "\t" + celular + "\t" + alergias + "\t" + comida + "\t" + medicina + "\t" + vegetariano + "\t" + dieta + "\t" + capacitacion + "\t" + camiseta + "\t" + contacto + "\t" + parentesco + "\t" + telemergencia + "\t" + aseguradora + "\t" + poliza + "\t" + vencimiento + "\t" + room);
+			}
+			rs.close();
+			connection.close();
+		}catch(SQLException e){
+			System.out.println(e.getMessage());
+		}
+	}
 	public void search(){
 		Scanner scan = new Scanner(System.in);
 		Connection connection = Database.connect();
 		Statement stmt;
 		String search, query;
+		int choice;
 		
 		try{
 			stmt = connection.createStatement();
-			System.out.println("Introduzca la palabra clave a buscar");
+			System.out.println("Introduzca el campo a buscar");
+			for (int i =1 ; i < tableHeader.length-1 ; i++ ) {
+				System.out.println((i) +": "+ tableHeader[i]);
+			}
+			choice = scan.nextInt();
+			scan.nextLine(); // Clear buffer
+			System.out.println("Introduzca el dato a buscar");
 			search = scan.nextLine();
-			stmt.execute("CREATE ALIAS IF NOT EXISTS FT_INIT FOR \"org.h2.fulltext.FullText.init\"");
-			stmt.execute("CALL FT_INIT()");
-			stmt.execute("CALL FT_REINDEX()");
-	
-			System.out.println(search);
-			query = "SELECT T.* FROM FT_SEARCH_DATA('" + search + "', 0, 0) FT, usuarios T WHERE FT.TABLE='usuarios' AND T.ID=FT.KEYS[0]";  
+			// Especial casos de ints como el campus
+			query = "SELECT * FROM USUARIOS WHERE "+columnNames[choice-1]+" LIKE '%"+ search + "%'";
 			ResultSet rs = stmt.executeQuery(query);
-			
 			// Print header
 			for(int i=0; i<tableHeader.length; i++){
 				System.out.print(tableHeader[i]+"\t");

@@ -31,6 +31,36 @@ public class Cuarto {
 		cuarto_id = -1;
 	}
 
+
+	public int saveToDB(){
+		String query = "";
+		if(cuarto_id != -1){
+			System.out.println("Ya existe este cuarto en la base de datos.");
+			return 0;
+		}
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+			
+			query = "INSERT INTO cuarto(num_cuarto, edificio, piso) VALUES(" + this.numeroCuarto + ", '" + this.edificio + "', " + this.piso + ")";
+			
+			stmt.execute(query);
+			
+			query = "SELECT TOP 1 ID FROM cuarto ORDER BY ID DESC";
+			
+			ResultSet rs = stmt.executeQuery(query);
+			if(rs.next())
+				cuarto_id = rs.getInt(1);
+			conn.close();
+			return cuarto_id;
+		} catch(SQLException e){
+			System.out.println("this is a DB error in saveToDB");
+			System.out.println(e.getMessage());
+			return -1;
+		}
+	}
+
+
 	/*
 		Juntar a /capacidad/ personas en un cuarto
 		Criterio: Campus distinto, mismo sexo
@@ -51,24 +81,34 @@ public class Cuarto {
 	
 		query = "SELECT * FROM usuarios WHERE sexo = '" + gender + "' AND cuarto_id IS null";
 
+		// Multiple queries to get room members
 		for (int i = 1; i <= capacity; i++) {
 			ResultSet rs = stmt.executeQuery(query);
-			rs.next();
+			if(!rs.next())
+				return false;
 			temp[i-1] = rs.getInt(7);
 			idtemp[i-1] = rs.getInt(1);
 			query += " AND campus IS NOT " + temp[i-1] + " AND id IS NOT " + idtemp[i-1];
 			System.out.println(query);
 		}
 		
+		// Save room and store last inserted ID in cuarto_id
+		if(saveToDB() == -1)
+			return false;
+		System.out.println("esto no sabe a sopa de tomato");
+		
 		query = "UPDATE usuarios SET cuarto_id =" + cuarto_id + " WHERE id=" + idtemp[0];
 		
+		// Updatea a todos los usuarios
 		for (int i = 1; i < idtemp.length; i++)
 			query += " OR id=" + idtemp[i];
 
 		try{
 			stmt.executeUpdate(query);
+			conn.close();
 			return true;
 		} catch(SQLException e){
+			System.out.println("hello world this is an error");
 			System.out.println(e.getMessage());
 			return false;
 		}

@@ -16,7 +16,7 @@ public class Actividad{
 	public Actividad(){
 		nombre = fechaInicio = fechaFin = sede = "";
 		act_id = -1;
-		encargado = new Usuario("instructor");
+		encargado = new Usuario("Instructor");
 	}
 	public Actividad(String nombre, String fechaInicio, String fechaFin, String sede, Usuario encargado){
 		this.nombre = nombre;
@@ -24,21 +24,18 @@ public class Actividad{
 		this.fechaFin = fechaFin;
 		this.sede = sede;
 		this.encargado = encargado;
-		act_id = saveToDB();
-		// Create entries en la DB en el JOIN TABLE assuming * USERS are required to attend this event
-		createJoinEntries();
+		this.act_id = -1;
 	}
-	private int saveToDB(){
-		String query = "";
+	public boolean saveToDB(){
 		if(act_id != -1){
 			System.out.println("Ya existe esta actividad en la base de datos.");
-			return 0;
+			return false;
 		}
 		try{
 			Connection conn = Database.connect();
 			Statement stmt = conn.createStatement();
 			
-			query = "INSERT INTO actividad(nombre, fecha_inicio, fecha_fin, sede) VALUES(" + this.nombre + ", " + this.fechaInicio + ", " + this.fechaFin + ", " + this.sede + ")";
+			String query = "INSERT INTO actividad(nombre, fecha_inicio, fecha_fin, sede) VALUES(" + this.nombre + ", " + this.fechaInicio + ", " + this.fechaFin + ", " + this.sede + ")";
 			
 			stmt.executeUpdate(query);
 			
@@ -47,10 +44,35 @@ public class Actividad{
 			ResultSet rs = stmt.executeQuery(query);
 			
 			act_id = rs.getInt(1);
-			return act_id;
+			conn.close();
+
 		} catch(SQLException e){
 			System.out.println(e.getMessage());
-			return -1;
+			return false;
+		}
+		// Crear entradas en la BD en el JOIN TABLE asumiendo que todos los usuarios tienen que asistir
+		createJoinEntries();
+		return true;
+	}
+	public void printActividades(){
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+			String query = "SELECT * FROM ACTIVIDAD";
+			ResultSet rs = stmt.executeQuery(query);
+
+			System.out.println("ID\tNombre\tFecha de Inicio\tFecha Fin\tSede");
+			while(rs.next()){
+				int id = rs.getInt(1);
+				String nombre = rs.getString(2);
+				String fecha_inicio = rs.getString(3);
+				String fecha_fin = rs.getString(4);
+				String sede = rs.getString(5);
+				System.out.println(id + "\t" + nombre + "\t" + fecha_inicio + "\t" + fecha_fin + "\t" + sede);
+			}
+			conn.close();
+		}catch(SQLException e){
+			System.out.println(e.getMessage());
 		}
 	}
 	public int getAsistentes(){
@@ -59,29 +81,104 @@ public class Actividad{
 	public static int getAsistentes(int act_id){
 		return asistentes(act_id);
 	}
-	private static int asistentes(int act_id){
-		// "SELECT * FROM ASISTENCIA_ACTIVIDAD WHERE actividad_id = " + act_id + " JOIN USUARIO ON asistencia_actividad.usuario_id = usuario.id
-		// SELECT * FROM ASISTENCIA_ACTIVIDAD WHERE actividad_id = act_id JOIN USUARIO ON asistencia_actividad.usuario_id = usuario.id
-		// Iterate over resultSet and print it, count number of assistants = TRUE
-		// return count
-
+	public int numeroAsistentes(int act_id){
+		String query = "";
+		query = "SELECT asistencia_actividad.usuario_id, usuarios.nombres, usuarios.apellidos, asistencia_actividad.asistencia FROM asistencia_actividad JOIN usuarios ON asistencia_actividad.usuario_id = usuarios.id AND actividad_id = " + act_id + "AND asistencia = TRUE";
+		int count = 0;
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()){
+				boolean asistencia = rs.getBoolean(4);
+				if(asistencia){
+					count++;
+				}
+			}
+			conn.close();
+		} catch(SQLException e){
+			System.out.println(e.getMessage());
+		}
+		return count;
 	}
-	public void printAsistencia(){
-		// Lo mesmo de arriba, pero ahora imprime todos, no nada mas los que si fueron
+	public static int asistentes(int act_id){
+		String query = "";
+		query = "SELECT asistencia_actividad.usuario_id, usuarios.nombres, usuarios.apellidos, asistencia_actividad.asistencia FROM asistencia_actividad JOIN usuarios ON asistencia_actividad.usuario_id = usuarios.id AND actividad_id = " + act_id + "AND asistencia = TRUE";
+		int count = 0;
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+
+			ResultSet rs = stmt.executeQuery(query);
+			System.out.println("ID\tNombres\tApellidos\tAsistió");
+
+			while(rs.next()){
+				int id = rs.getInt(1);
+				String nombres = rs.getString(2);
+				String apellidos = rs.getString(3);
+				boolean asistencia = rs.getBoolean(4);
+				System.out.println(id + "\t" + nombres + "\t" + apellidos + "\t" + asistencia);
+				
+				if(asistencia){
+					count++;
+				}
+			}
+			conn.close();
+		} catch(SQLException e){
+			System.out.println(e.getMessage());
+		}
+		return count;
+	}
+	public void printAsistenciaSome(int act_id){
+		asistentes(act_id);
+	}
+	public void printAsistenciaAll(int act_id){
+		//Imprime toda persona, aunque haya asistido o no.
+		String query = "";
+		query = "SELECT asistencia_actividad.usuario_id, usuarios.nombres, usuarios.apellidos, asistencia_actividad.asistencia FROM asistencia_actividad JOIN usuarios ON asistencia_actividad.usuario_id = usuarios.id AND actividad_id = " + act_id;
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+
+			ResultSet rs = stmt.executeQuery(query);
+			
+			System.out.println("ID\tNombres\tApellidos\tAsistió");
+
+			while(rs.next()){
+				int id = rs.getInt(1);
+				String nombres = rs.getString(2);
+				String apellidos = rs.getString(3);
+				boolean asistencia = rs.getBoolean(4);
+				System.out.println(id + "\t" + nombres + "\t" + asistencia);
+			}
+			conn.close();
+		} catch(SQLException e){
+			System.out.println(e.getMessage());
+		}
 	}
 	private boolean createJoinEntries(){
 		// Create multiple entries:
-		// SELECT id FROM USUARIOS
-		// El result anterior guardalo en un array users[];
-		/* 
-			INSERT INTO ''TABLE'' (''column1'', [''column2, ... '']) 
-			VALUES 
-			(''value1a'', [''value1b, ...'']), 
-			(''value2a'', [''value2b, ...'']), 
-			...
-		*/
-	}
+		try{
+			Connection conn = Database.connect();
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT id FROM usuarios");
+			String query = "INSERT INTO asistencia_actividad (actividad_id, usuario_id) VALUES ";
+			while(rs.next())
+				query += "(" + act_id + ", " + rs.getInt(1)+"), ";
+			// Quita la coma final
+			query = query.substring(0, query.length()-2);
+			query += ";";
+			
+			Statement stmt2 = conn.createStatement();
+			stmt2.execute(query);
 
+			conn.close();
+			return true;
+		} catch(SQLException e){
+			System.out.println(e.getMessage());
+			return false;
+		}
+	}
 
 	// Getters
 	public String getNombre(){
